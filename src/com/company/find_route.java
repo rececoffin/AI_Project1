@@ -1,15 +1,13 @@
 package com.company;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UninformedSearch {
-    public static final String FILE_NAME = "input1.txt";
+public class find_route {
     //node and edge classes to store information
     private class Node {
         public String name;
@@ -39,17 +37,23 @@ public class UninformedSearch {
     }
     //adjacency list to represent the graph
     private Map<Node, ArrayList<Edge>> the_map;
+    private String fileName;
+    private Node originCity;
+    private Node destinationCity;
 
-    public UninformedSearch(){
+    public find_route(String[] args){
         the_map = new HashMap<>();
         //read the file and initialize the map
+        this.fileName = args[0];
+        this.originCity = new Node(args[1]);
+        this.destinationCity = new Node(args[2]);
         initMap();
     }
 
     private void initMap() {
         //read the file, stop at terminating line
         try {
-            FileReader r = new FileReader(FILE_NAME);
+            FileReader r = new FileReader(fileName);
             BufferedReader reader = new BufferedReader(r);
             String line;
             while ((line = reader.readLine()) != null){
@@ -62,6 +66,17 @@ public class UninformedSearch {
                 Node n = new Node(lineArr[0]);
                 Edge e = new Edge( lineArr[1], Integer.parseInt(lineArr[2]));
                 //add to the map
+                if(the_map.containsKey(n)){
+                    the_map.get(n).add(e);
+                }
+                else {
+                    ArrayList<Edge> edges = new ArrayList<>();
+                    edges.add(e);
+                    the_map.put(n, edges);
+                }
+                //add the reverse edge too
+                n = new Node(lineArr[1]);
+                e = new Edge(lineArr[0], Integer.parseInt(lineArr[2]));
                 if(the_map.containsKey(n)){
                     the_map.get(n).add(e);
                 }
@@ -91,6 +106,6 @@ public class UninformedSearch {
 
     //run the program
     public static void main(String[] args){
-       UninformedSearch us = new UninformedSearch();
+       find_route us = new find_route(args);
     }
 }
