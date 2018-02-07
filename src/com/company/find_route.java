@@ -1,7 +1,10 @@
+/*
+  Author: Rece Coffin
+  AI Project 1
+  Implement an uninformed search algorithm on a map to
+  find a path between two cities
+ */
 package com.company;
-
-import org.omg.CORBA.NO_IMPLEMENT;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,12 +13,12 @@ import java.util.*;
 public class find_route {
     //node and edge classes to store information
     private class Node {
-        public String name;
-        public Node parent;
-        public Node(String name){
+        String name;
+        Node parent;
+        Node(String name){
             this.name = name;
         }
-        //methods to make node compareable
+        //methods to make node comparable
         @Override
         public boolean equals(Object obj){
             if(!(obj instanceof Node)) return false;
@@ -29,9 +32,9 @@ public class find_route {
         }
     }
     private class Edge{
-        public Node dest;
-        public int cost;
-        public Edge(Node dest, int cost){
+        Node dest;
+        int cost;
+        Edge(Node dest, int cost){
             this.dest = dest;
             this.cost = cost;
         }
@@ -42,7 +45,7 @@ public class find_route {
     private Node originCity;
     private Node destinationCity;
 
-    public find_route(String[] args){
+    private find_route(String[] args){
         the_map = new HashMap<>();
         //read the file and initialize the map
         this.fileName = args[0];
@@ -97,6 +100,7 @@ public class find_route {
         ArrayList<Node> solution = new ArrayList<>();
         ArrayList<Integer> distances = new ArrayList<>();
         Node n = destinationCity;
+        //trace back through parent pointers
         while(!n.equals(originCity)){
             solution.add(n);
             distances.add(getDistance(n, parents.get(n)));
@@ -119,28 +123,26 @@ public class find_route {
         System.out.println("none");
     }
 
-    private void printSolution(ArrayList<Node> solution, Map<Node, Node> parents,
-                                                       ArrayList<Integer> distances) {
+    private void printSolution(ArrayList<Node> solution,
+                               Map<Node, Node> parents,
+                               ArrayList<Integer> distances) {
         //reverse the solution
         int size = solution.size();
         Collections.reverse(solution);
         Collections.reverse(distances);
+
         //print the total distance first
-        System.out.println("distance: " + distances.stream().mapToInt(Integer::intValue).sum() + " km");
+        System.out.println("distance: "
+                            + distances.stream().mapToInt(Integer::intValue).sum() + " km");
+
         //print the complete route
         System.out.println("route:");
-        for(int i = 0; i < size - 1; i+=2){
+        for(int i = 0; i < size - 1; i++){
             Node start = solution.get(i);
             Node dest = solution.get(i + 1);
             System.out.println(start.name + " to " + dest.name + ", "
                                 + distances.get(i) + " km");
         }
-        //print the last leg of the trip
-        Node start = solution.get(size - 2);
-        Node dest = solution.get(size - 1);
-        System.out.println(start.name + " to " + dest.name + ", "
-                            + distances.get(distances.size() - 1) + " km");
-
     }
 
     //get the distance from the map
@@ -152,7 +154,7 @@ public class find_route {
     }
 
 
-    //initilize the adj lists
+    //init the adj lists
     private void initMap() {
         //read the file, stop at terminating line
         try {
