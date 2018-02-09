@@ -59,9 +59,9 @@ public class find_route {
     private void search() {
         //queue for BFS
         LinkedList<Node> queue = new LinkedList<>();
-        Map<Node, Boolean> visited = initVisited();
+        Map<Node, Integer> distances = initDistance();
         Map<Node, Node> parents = new HashMap<>();
-        visited.put(originCity, true);
+        distances.put(originCity, 0);
         //begin the queue
         queue.add(originCity);
 
@@ -74,16 +74,25 @@ public class find_route {
             for(Edge e : the_map.get(city)){
                 Node n = e.dest;
                 //check if visited and add
-                if(!visited.get(n)){
-                    visited.put(n, true);
+                //also check the distance
+                if(distances.get(city) + e.cost < distances.get(n)){
                     n.parent = city;
                     parents.put(n, city);
+                    distances.put(n, distances.get(city) + e.cost);
                     queue.add(n);
                 }
             }
         }
         //get the solution
         getSolution(parents);
+    }
+
+    private Map<Node,Integer> initDistance() {
+        Map<Node, Integer> d = new HashMap<>();
+        for(Node n : the_map.keySet()){
+            d.put(n, Integer.MAX_VALUE);
+        }
+        return d;
     }
 
     //helper function to init a map
